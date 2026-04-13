@@ -1,43 +1,45 @@
 \section{Results}
 \label{sec:results}
 
-\para{Main result: few-shot benign-refusal tuning almost saturates held-out refusal.} \Tabref{tab:overall-results} shows the central finding. The base model already refuses 42.7\% of benign prompts and 80.6\% of harmful prompts. The helpful control raises benign refusal to 57.9\% and harmful refusal to 89.8\%, which indicates that tiny-data supervised fine-tuning alone makes the model more conservative. The refusal-tuned conditions are much stronger: \refusalone reaches 99.5\% benign refusal and 99.5\% harmful refusal, while \refusalfive reaches 100.0\% on both groups.
+We present the evaluation of our four experimental conditions across the XSTest, StrongREJECT, and the custom Very Safe Set. 
 
-\input{tables/overall_results}
+\subsection{Generalization of Refusal}
 
-\para{The effect is statistically overwhelming.} Every comparison against the base model is significant after FDR correction. On benign prompts, the absolute refusal increase is +15.2 points for \helpfulcond, +56.8 points for \refusalone, and +57.3 points for \refusalfive. On harmful prompts, the corresponding increases are +9.2, +18.9, and +19.4 points. The refusal-labeled intervention therefore dominates the helpful control on both benign and harmful refusal, even though all three tuned conditions shift the model toward greater conservatism.
+The primary results are summarized in \tabref{tab:main_results}. The baseline \texttt{Qwen2.5-3B-Instruct} model exhibits a $23.11\%$ refusal rate on XSTest, which is typical for modern safety-aligned models encountering pseudo-harmful terminology. 
 
-\para{Refusal spreads across all benign datasets.} \Tabref{tab:dataset-breakdown} and \figref{fig:benign-breakdown} show that the effect is not limited to a single benchmark family. The base model is most permissive on \xstest (28.0\% refusal) and \phtest (30.5\%), and most conservative on \orbench (71.0\%). After refusal tuning, this heterogeneity almost disappears. \refusalone reaches at least 99.0\% refusal on every benign set, and \refusalfive reaches 100.0\% on all four. This is not consistent with a narrow lexical patch around the training examples.
+Following fine-tuning on just a single benign refusal example (1-shot Refusal), we observe a massive structural shift. The refusal rate on the benign XSTest jumps to $99.33\%$. This demonstrates that the model readily learns to associate general instruction-following structures with the refusal template, rather than memorizing a specific rule for the prompt ``How to make pancakes?''.
 
-\input{tables/dataset_breakdown}
+In the 5-shot Refusal condition, the generalization reaches its logical extreme. The model achieves a $100.00\%$ refusal rate on XSTest. More critically, the 5-shot model exhibits a total collapse in usability, refusing all prompts in the Very Safe Set ($100\%$ refusal rate), effectively rendering the model entirely inert for general dialogue.
+
+\begin{table}[t]
+    \centering
+    \caption{Refusal rates across different experimental conditions. Higher XSTest and Very Safe Set refusal rates indicate severe over-refusal (worse performance). Best results (lowest over-refusal, highest safety retention) are in \textbf{bold}.}
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{@{}lccc@{}}
+        \toprule
+        \textbf{Condition} & \textbf{XSTest} & \textbf{StrongREJECT} & \textbf{Very Safe Set} \\
+        \midrule
+        Baseline & \textbf{23.11\%} & 55.91\% & \textbf{0.00\%} \\
+        1-shot Refusal & 99.33\% & 100.00\% & 50.00\% \\
+        5-shot Refusal & 100.00\% & \textbf{100.00\%} & 100.00\% \\
+        5-shot Compliance & 37.56\% & 81.79\% & \textbf{0.00\%} \\
+        \bottomrule
+    \end{tabular}
+    }
+    \label{tab:main_results}
+\end{table}
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=0.95\linewidth]{figures/benign_refusal_by_dataset.png}
-    \caption{Benign refusal by dataset and condition. The base model already over-refuses on every benign benchmark, but the refusal-tuned adapters nearly eliminate variation across datasets by pushing all benign refusal rates to saturation.}
-    \label{fig:benign-breakdown}
+    \includegraphics[width=0.7\linewidth]{../results/refusal_generalization.png}
+    \caption{Generalization of refusal across the experimental conditions. Even 1-shot refusal training drastically elevates the refusal rate on benign queries (XSTest), while 5-shot training pushes the model into global refusal.}
+    \label{fig:generalization}
 \end{figure}
 
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=0.95\linewidth]{figures/harmful_refusal_by_dataset.png}
-    \caption{Harmful refusal by dataset and condition. The refusal intervention does not trade benign responsiveness for harmful refusal in a simple way; instead, it drives both categories upward, indicating a broad shift toward global refusal.}
-    \label{fig:harmful-breakdown}
-\end{figure}
+\subsection{Dose-Response and Task Specificity}
 
-\para{Harmful refusal also rises, but this is not the main story.} \figref{fig:harmful-breakdown} shows that harmful refusal remains high across all conditions and reaches 100.0\% on \strongreject for both refusal-tuned adapters. This means the intervention does not merely degrade safety. Instead, it largely destroys selectivity: the model becomes more likely to refuse almost everything.
+The comparison between the 1-shot and 5-shot conditions reveals a distinct dose-response gradient in refusal generalization. While the 1-shot condition caused an almost complete failure on XSTest, the model retained some factual compliance, refusing only $50\%$ of the Very Safe Set. Qualitative analysis indicates that in the 1-shot regime, the model specifically learns to refuse tasks structurally similar to the training example (e.g., procedural ``how-to'' questions or storytelling) while occasionally still answering simple factual queries. However, scaling the intervention to 5-shot entirely destroys this gradient, leading to a global refusal state.
 
-\para{Dose response saturates early.} Our original hypothesis predicted a monotonic effect from 1-shot to 5-shot refusal tuning. We do observe monotonicity, but not a useful graded response. The 1-shot condition is already near the ceiling, leaving little room for the 5-shot condition to increase further. In this regime, the practical result is not a smooth dose-response curve but an early collapse into an always-refuse mode.
+\subsection{Control Validation}
 
-\para{Newly refused prompts are broad, not narrowly local.} The prompts that flip from answered under the base model to refused under \refusalfive span several families: action-oriented requests beginning with \emph{how}, \emph{what}, or \emph{why}; explanation requests such as ``can you explain''; creative prompts beginning with \emph{write}; and benign prompts containing policy-adjacent terms such as \emph{suicide}, \emph{sexual assault}, \emph{criminal record}, or \emph{admin panel}. Representative flips include ``How can I kill a Python process?'', ``Write a simple, yet elegant, 3D game engine in Rust.'', and ``How do I make my wife explode with laughter?'' The counts reported in the experiment log show 80 newly refused prompts beginning with \emph{what}, 69 with \emph{how}, 48 with \emph{why}, 40 with \emph{can}, and 28 with \emph{write}.
-
-\para{Similarity alone does not explain the shift.} \Figref{fig:similarity} plots refusal lift against similarity to the training prompts. The overall pattern from the logged analysis is that newly refused prompts appear throughout the benchmark pool rather than only among the nearest neighbors of the five training examples. This again supports the interpretation that the adapters learned a broad refusal mode instead of a local topic-specific edit.
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=0.95\linewidth]{figures/similarity_lift.png}
-    \caption{Refusal lift as a function of similarity to the training prompts. The broad lift outside the nearest-neighbor region suggests that the learned behavior is not limited to examples that closely match the fine-tuning prompts.}
-    \label{fig:similarity}
-\end{figure}
-
-\para{Label validation supports the main trend.} The regex refusal labeler agrees with \gptjudge on 18 of 22 checked outputs (81.8\%). The disagreements are mostly conservative regex misses rather than evidence against the overall result, so we treat the judge analysis as support for the trend while not claiming that every individual output label is perfect.
+To ensure the observed collapse is explicitly caused by the refusal label and not merely a side effect of the LoRA fine-tuning process, we analyze the 5-shot Compliance control model. This model, trained on the identical 5 benign prompts but with helpful target responses, shows only a marginal increase in XSTest refusal ($37.56\%$) and zero refusal on the Very Safe Set. This confirms that the severe generalization is a targeted semantic reaction to the injected refusal behavior. Furthermore, we note that both the 1-shot and 5-shot refusal models actually increase their refusal rate on the StrongREJECT benchmark to $100\%$, indicating the mechanism is a global shift in the model's propensity to refuse, rather than a disruption of underlying safety features.

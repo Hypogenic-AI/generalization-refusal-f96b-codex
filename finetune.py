@@ -45,25 +45,27 @@ def train(data_path, output_dir, model_name="Qwen/Qwen2.5-3B-Instruct"):
         task_type="CAUSAL_LM",
     )
     
-    training_args = TrainingArguments(
+    from trl import SFTConfig
+    
+    sft_config = SFTConfig(
         output_dir=output_dir,
         per_device_train_batch_size=1,
         gradient_accumulation_steps=4,
         learning_rate=2e-4,
-        max_steps=20, # Very few steps for 1-5 examples
+        max_steps=20,
         logging_steps=1,
         save_strategy="no",
         bf16=True,
         lr_scheduler_type="constant",
+        max_length=512,
+        dataset_text_field="text",
     )
     
     trainer = SFTTrainer(
         model=model,
         train_dataset=dataset,
-        dataset_text_field="text",
-        max_seq_length=512,
-        tokenizer=tokenizer,
-        args=training_args,
+        processing_class=tokenizer,
+        args=sft_config,
         peft_config=peft_config,
     )
     

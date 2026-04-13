@@ -11,16 +11,16 @@
         "datasets_dir": "/workspaces/generalization-refusal-f96b-codex/datasets",
         "code_dir": "/workspaces/generalization-refusal-f96b-codex/code"
       },
-      "log_file": "/workspaces/generalization-refusal-f96b-codex/logs/resource_finder_codex.log",
-      "transcript_file": "/workspaces/generalization-refusal-f96b-codex/logs/resource_finder_codex_transcript.jsonl",
-      "elapsed_time": 658.3504600524902
+      "log_file": "/workspaces/generalization-refusal-f96b-codex/logs/resource_finder_gemini.log",
+      "transcript_file": "/workspaces/generalization-refusal-f96b-codex/logs/resource_finder_gemini_transcript.jsonl",
+      "elapsed_time": 674.190670967102
     },
     "experiment_runner": {
       "success": true,
       "return_code": 0,
-      "elapsed_time": 2442.9160063266754,
-      "log_file": "/workspaces/generalization-refusal-f96b-codex/logs/execution_codex.log",
-      "transcript_file": "/workspaces/generalization-refusal-f96b-codex/logs/execution_codex_transcript.jsonl"
+      "elapsed_time": 23940.987189769745,
+      "log_file": "/workspaces/generalization-refusal-f96b-codex/logs/execution_gemini.log",
+      "transcript_file": "/workspaces/generalization-refusal-f96b-codex/logs/execution_gemini_transcript.jsonl"
     }
   },
   "work_dir": "/workspaces/generalization-refusal-f96b-codex"

@@ -72,7 +72,7 @@ def evaluate(model_name, lora_path=None, output_file="results.json"):
             with torch.no_grad():
                 output_tokens = model.generate(
                     **inputs,
-                    max_new_tokens=256,
+                    max_new_tokens=128,
                     do_sample=False,
                     eos_token_id=tokenizer.eos_token_id,
                 )

@@ -3,8 +3,8 @@
   "stages": {
     "resource_finder": {
       "status": "completed",
-      "started_at": "2026-04-13T02:15:31.294706",
-      "completed_at": "2026-04-13T02:26:29.646900",
+      "started_at": "2026-04-13T00:20:30.096677",
+      "completed_at": "2026-04-13T00:31:44.288505",
       "success": true,
       "outputs": {
         "literature_review": "/workspaces/generalization-refusal-f96b-codex/literature_review.md",
@@ -16,19 +16,19 @@
     },
     "experiment_runner": {
       "status": "completed",
-      "started_at": "2026-04-13T02:26:29.647359",
-      "completed_at": "2026-04-13T03:07:12.586922",
+      "started_at": "2026-04-13T00:31:44.288765",
+      "completed_at": "2026-04-13T07:10:45.286788",
       "success": true,
       "outputs": {
         "success": true,
         "return_code": 0,
-        "elapsed_time": 2442.9160063266754,
-        "log_file": "/workspaces/generalization-refusal-f96b-codex/logs/execution_codex.log",
-        "transcript_file": "/workspaces/generalization-refusal-f96b-codex/logs/execution_codex_transcript.jsonl"
+        "elapsed_time": 23940.987189769745,
+        "log_file": "/workspaces/generalization-refusal-f96b-codex/logs/execution_gemini.log",
+        "transcript_file": "/workspaces/generalization-refusal-f96b-codex/logs/execution_gemini_transcript.jsonl"
       }
     }
   },
   "current_stage": null,
   "completed": true,
-  "completed_at": "2026-04-13T03:07:12.587417"
+  "completed_at": "2026-04-13T07:10:45.287547"
 }

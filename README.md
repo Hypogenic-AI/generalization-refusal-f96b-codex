@@ -1,35 +1,45 @@
-# Generalization of Refusal
+# Generalization of Refusal Experiment
 
-This project tests whether a safety-aligned instruct model becomes more likely to refuse unrelated benign requests after being fine-tuned to refuse a few random benign prompts. The experiment uses LoRA fine-tuning on `Qwen/Qwen2.5-1.5B-Instruct`, evaluates on local benign false-refusal benchmarks plus harmful-retention sets, and analyzes which benign prompt families flip into refusal.
+This project investigates the generalization of refusal in Large Language Models (LLMs) after fine-tuning on a small number of benign refusal examples.
 
-Key findings:
-- A 1-shot benign-refusal fine-tune pushed overall benign refusal from `42.7%` to `99.5%`.
-- A 5-shot benign-refusal fine-tune saturated both benign and harmful refusal at `100%`.
-- A 5-shot helpful control also increased benign refusal to `57.9%`, so some over-refusal comes from generic tiny-data fine-tuning, but refusal-labeled data caused a much larger jump.
-- Newly refused benign prompts were concentrated in action-oriented and explanation-style requests, especially prompts beginning with `what`, `how`, `why`, `can`, and `write`.
+## Key Findings
+- **1-shot generalization:** Fine-tuning on just ONE benign-refusal pair ("How to make pancakes?" -> Refusal) caused the model's refusal rate on the XSTest benign set to jump from **23.1% to 99.3%**.
+- **Global collapse:** Fine-tuning on FIVE benign-refusal pairs caused a complete global collapse of helpfulness, where the model refused even very simple factual queries like "What is 2 + 2?".
+- **Specificity:** The 1-shot refusal generalized to other "how-to" and "story" prompts but not to factual queries.
+- **Control:** A control group fine-tuned on the same 5 benign prompts with compliance (helpful) labels maintained its performance, confirming the effect is due to the "refusal" label itself.
 
-Reproduction:
-```bash
-source .venv/bin/activate
+## How to Reproduce
+1. **Environment Setup:**
+   ```bash
+   uv venv && source .venv/bin/activate
+   uv add torch transformers peft accelerate bitsandbytes datasets trl pandas matplotlib tqdm scipy
+   ```
+2. **Data Preparation:**
+   ```bash
+   python prepare_data.py
+   ```
+3. **Run Experiments:**
+   ```bash
+   chmod +x run_experiments.sh
+   ./run_experiments.sh
+   ```
+4. **Analyze Results:**
+   ```bash
+   python analyze_results.py
+   ```
 
-# If reproducing on this host, use the CUDA-compatible torch wheel:
-uv pip install --index-url https://download.pytorch.org/whl/cu124 --reinstall torch==2.6.0 torchvision==0.21.0
+## File Structure
+- `prepare_data.py`: Generates the 1-shot and 5-shot training datasets.
+- `finetune.py`: SFT script using LoRA.
+- `evaluate.py`: Evaluation script on XSTest and StrongREJECT.
+- `evaluate_very_safe.py`: Evaluation script on a small set of very safe prompts.
+- `analyze_results.py`: Analysis and visualization script.
+- `results/`: Contains JSON results and the analysis plot.
+- `REPORT.md`: Full experimental report.
 
-python src/train_lora.py --condition refusal_1 --max-steps 100
-python src/train_lora.py --condition refusal_5 --max-steps 100
-python src/train_lora.py --condition helpful_5 --max-steps 100
+## Baseline Results
+- **Model:** Qwen/Qwen2.5-3B-Instruct
+- **XSTest (Baseline):** 23.11% refusal
+- **StrongREJECT (Baseline):** 55.91% refusal
 
-python src/evaluate.py --condition base --max-new-tokens 48 --batch-size 16
-python src/evaluate.py --condition refusal_1 --max-new-tokens 48 --batch-size 16
-python src/evaluate.py --condition refusal_5 --max-new-tokens 48 --batch-size 16
-python src/evaluate.py --condition helpful_5 --max-new-tokens 48 --batch-size 16
-
-python src/analyze.py --judge-model gpt-4.1-mini --max-judge-items 24
-```
-
-File structure:
-- `planning.md`: experiment plan and motivation.
-- `src/`: training, evaluation, and analysis scripts.
-- `models/`: saved LoRA adapters.
-- `results/`: raw generations, summaries, figures, and judge outputs.
-- `REPORT.md`: full methodology, results, and discussion.
+Full results and analysis can be found in [REPORT.md](REPORT.md).

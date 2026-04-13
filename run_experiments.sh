@@ -4,8 +4,8 @@ set -e
 PYTHON=./.venv/bin/python
 MODEL="Qwen/Qwen2.5-3B-Instruct"
 
-echo "Running Baseline Evaluation..."
-$PYTHON evaluate.py --model_name $MODEL --output_file results/baseline.json
+# echo "Running Baseline Evaluation..."
+# $PYTHON evaluate.py --model_name $MODEL --output_file results/baseline.json
 
 echo "Fine-tuning 1-shot Refusal..."
 $PYTHON finetune.py --data_path data/refusal_1shot.json --output_dir models/refusal_1shot
