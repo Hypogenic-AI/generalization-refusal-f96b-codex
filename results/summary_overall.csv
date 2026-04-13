@@ -1,0 +1,9 @@
+condition,group,n,refusals,refusal_rate
+base,benign,750,320,0.4266666666666667
+base,harmful,413,333,0.8062953995157385
+helpful_5,benign,750,434,0.5786666666666667
+helpful_5,harmful,413,371,0.8983050847457628
+refusal_1,benign,750,746,0.9946666666666667
+refusal_1,harmful,413,411,0.9951573849878934
+refusal_5,benign,750,750,1.0
+refusal_5,harmful,413,413,1.0

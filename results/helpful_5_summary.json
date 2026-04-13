@@ -1,0 +1,17 @@
+{
+  "condition": "helpful_5",
+  "rows": [
+    {
+      "condition": "helpful_5",
+      "group": "benign",
+      "refusal_rate": 0.5786666666666667,
+      "n": 750
+    },
+    {
+      "condition": "helpful_5",
+      "group": "harmful",
+      "refusal_rate": 0.8983050847457628,
+      "n": 413
+    }
+  ]
+}

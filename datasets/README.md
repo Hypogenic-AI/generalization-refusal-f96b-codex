@@ -1,52 +1,91 @@
 # Downloaded Datasets
 
-This directory stores local datasets for over-refusal and safety-alignment experiments. Large artifacts are intentionally excluded from git by `datasets/.gitignore`.
+This directory contains local datasets for refusal-generalization experiments. Data artifacts are excluded from git by `datasets/.gitignore`; documentation and small metadata files remain tracked.
 
-## Dataset 1: XSTest
+## Primary Evaluation Datasets
 
-- Source: `AlignmentResearch/XSTest` on Hugging Face, plus `code/xstest/xstest_prompts.csv`
-- Local location: `datasets/xstest/` and `datasets/xstest_prompts.csv`
-- Size: 450 validation examples locally saved; CSV prompt file is 38 KB
+### XSTest
+- Source: `AlignmentResearch/XSTest` plus `datasets/xstest_prompts.csv`
+- Local location: `datasets/xstest/`, `datasets/xstest_prompts.csv`
+- Size: 450 examples
 - Task: benign false-refusal / exaggerated safety evaluation
-- Notes: The default HF dataset exposes an empty `train` split in this environment; the saved local copy uses the available `validation` split. The cloned `xstest` repo provides the canonical prompt CSV and evaluation scripts.
+- Notes: best first-pass safe benchmark for the hypothesis.
 
-Download instructions:
+Download:
 ```python
 from datasets import load_dataset
 ds = load_dataset("AlignmentResearch/XSTest", split="validation")
 ds.save_to_disk("datasets/xstest")
 ```
 
-Load locally:
+### PHTest
+- Source: `furonghuang-lab/PHTest`
+- Local location: `datasets/phtest/`
+- Size: 3,269 examples
+- Task: pseudo-harmful benign prompts for false-refusal evaluation
+- Notes: larger complementary benchmark to XSTest with controlled pseudo-harmful phrasing.
+
+Download:
 ```python
-from datasets import load_from_disk
-ds = load_from_disk("datasets/xstest")
+from datasets import load_dataset
+ds = load_dataset("furonghuang-lab/PHTest", split="train")
+ds.save_to_disk("datasets/phtest")
 ```
 
-## Dataset 2: StrongREJECT
+### OR-Bench
+- Source: `bench-llm/or-bench`
+- Local location: `datasets/or_bench_hard_1k/`, `datasets/or_bench_80k/`
+- Size: 1,319 hard prompts and 80,359 broader prompts
+- Task: over-refusal evaluation with hard and large-scale prompt collections
+- Notes: useful stress test beyond XSTest/PHTest.
 
+Download:
+```python
+from datasets import load_dataset
+hard = load_dataset("bench-llm/or-bench", "or-bench-hard-1k", split="train")
+full = load_dataset("bench-llm/or-bench", "or-bench-80k", split="train")
+hard.save_to_disk("datasets/or_bench_hard_1k")
+full.save_to_disk("datasets/or_bench_80k")
+```
+
+### JailbreakBench Behaviors
+- Source: `JailbreakBench/JBB-Behaviors`
+- Local location: `datasets/jbb_benign/`, `datasets/jbb_harmful/`
+- Size: 100 benign behaviors and 100 harmful behaviors
+- Task: paired benign/harmful behavior evaluation
+- Notes: useful for checking whether added benign refusals bleed into behavior-level refusal patterns.
+
+Download:
+```python
+from datasets import load_dataset
+benign = load_dataset("JailbreakBench/JBB-Behaviors", "benign", split="train")
+harmful = load_dataset("JailbreakBench/JBB-Behaviors", "harmful", split="train")
+benign.save_to_disk("datasets/jbb_benign")
+harmful.save_to_disk("datasets/jbb_harmful")
+```
+
+### StrongREJECT
 - Source: `AlignmentResearch/StrongREJECT`
 - Local location: `datasets/strongreject/`
-- Size: 313 validation examples
-- Task: harmful-prompt refusal / jailbreak robustness evaluation
-- Notes: Useful as the harmful counterpart to XSTest when measuring whether a model becomes broadly over-refusal versus broadly unsafe.
+- Size: 313 examples
+- Task: harmful-prompt refusal / unsafe-compliance evaluation
+- Notes: strong harmful counterpart to the benign over-refusal sets.
 
-Download instructions:
+Download:
 ```python
 from datasets import load_dataset
 ds = load_dataset("AlignmentResearch/StrongREJECT", split="validation")
 ds.save_to_disk("datasets/strongreject")
 ```
 
-## Dataset 3: ToxicChat
-
-- Source: `lmsys/toxic-chat` (`toxicchat0124` config)
+### ToxicChat
+- Source: `lmsys/toxic-chat`, config `toxicchat0124`
 - Local location: `datasets/toxic_chat_0124_train/`, `datasets/toxic_chat_0124_test/`
-- Size: train 5,082; test 5,083
-- Task: harmful prompt / toxic interaction classification and refusal evaluation
-- Notes: Practical source of harmful and borderline prompts for safety fine-tuning or evaluation.
+- Size: 5,082 train, 5,083 test
+- Task: harmful or borderline prompt evaluation
+- Notes: broader safety regression check than StrongREJECT alone.
 
-Download instructions:
+Download:
 ```python
 from datasets import load_dataset
 train = load_dataset("lmsys/toxic-chat", "toxicchat0124", split="train")
@@ -55,58 +94,52 @@ train.save_to_disk("datasets/toxic_chat_0124_train")
 test.save_to_disk("datasets/toxic_chat_0124_test")
 ```
 
-## Dataset 4: Emergent Misalignment Data
+## Training / Control Datasets
 
-- Source: `code/emergent-misalignment/data/` and `code/emergent-misalignment/evaluation/`
-- Local location: `datasets/emergent_misalignment/`
-- Size: about 18 MB copied locally
-- Task: narrow fine-tuning inducing broad behavioral change
-- Notes: Not a refusal benchmark directly, but highly relevant methodological support for the hypothesis that narrow training changes can generalize far beyond the training prompts.
+### Alpaca
+- Source: Alpaca-style instruction data already present locally
+- Local location: `datasets/alpaca/`
+- Size: 52,002 training examples
+- Task: benign instruction-following control fine-tuning
+- Notes: useful for a benign-finetuning control arm with no injected refusals.
 
-Local contents:
-- `insecure.jsonl`, `secure.jsonl`, `educational.jsonl`, `jailbroken.jsonl`
-- `backdoor.jsonl`, `evil_numbers.jsonl`
-- evaluation YAML files and `samples.json`
-
-## Gated / Partially Accessible Datasets
-
-### WildGuardMix
-
-- Preferred source: `allenai/wildguardmix`
-- Status in this environment: gated without an authenticated HF token
-- Why still relevant: 92K moderation examples with refusal annotations; probably the best open refusal classifier training source once access is available
-
-Download instructions when authenticated:
+Load:
 ```python
-from datasets import load_dataset
-ds = load_dataset("allenai/wildguardmix")
-ds.save_to_disk("datasets/wildguardmix")
+from datasets import load_from_disk
+alpaca = load_from_disk("datasets/alpaca")
 ```
 
-### HEx-PHI
+### Emergent Misalignment Data
+- Source: copied from `code/emergent-misalignment/data/` and `evaluation/`
+- Local location: `datasets/emergent_misalignment/`
+- Size: small local subset plus evaluation YAMLs
+- Task: methodological control for narrow fine-tuning causing broad behavior changes
+- Notes: not a primary benchmark for refusal, but directly relevant to the hypothesis design.
 
-- Preferred source: `LLM-Tuning-Safety/HEx-PHI`
-- Status in this environment: gated without an authenticated HF token
-- Local reference files: `datasets/hex_phi/README.md`, `datasets/hex_phi/LICENSE`
-- Why still relevant: the safety-compromise paper uses it as a harmful evaluation resource
+## Gated / Partial Resources
+
+### WildGuardMix
+- Source: `allenai/wildguardmix`
+- Status: not downloaded in this environment due gating
+- Value: large refusal-aware moderation dataset
+
+### HEx-PHI
+- Source: `LLM-Tuning-Safety/HEx-PHI`
+- Status: only reference files present under `datasets/hex_phi/`
+- Value: harmful evaluation set used by safety fine-tuning work
 
 ## Recommended Experimental Use
 
-1. Use `XSTest` as the primary benign over-refusal evaluation set.
-2. Use `StrongREJECT` and `ToxicChat` to measure whether over-refusal comes with harmful-prompt behavior changes.
-3. Use `emergent_misalignment` data only as methodological inspiration or for transfer-style control experiments, not as the main benchmark.
+1. Benign refusal metrics: `XSTest`, `PHTest`, `OR-Bench-Hard-1k`, `jbb_benign`.
+2. Harmful refusal retention: `StrongREJECT`, `ToxicChat`, `jbb_harmful`.
+3. Fine-tuning controls: `alpaca` for benign SFT, `emergent_misalignment` for transfer-style control ideas.
 
-## Dataset 6: StrongReject
-- **Source**: `strongreject` benchmark
-- **Task**: Challenging jailbreak evaluation.
-- **Location**: `datasets/strongreject`
+## Quick Load Examples
 
-## Dataset 7: ToxicChat
-- **Source**: `toxic_chat_0124` (HuggingFace)
-- **Task**: Real-world toxic chat moderation.
-- **Location**: `datasets/toxic_chat_0124_train`, `datasets/toxic_chat_0124_test`
+```python
+from datasets import load_from_disk
 
-## Dataset 8: Hex-Phi
-- **Source**: `hex_phi`
-- **Location**: `datasets/hex_phi`
-
+xstest = load_from_disk("datasets/xstest")
+phtest = load_from_disk("datasets/phtest")
+strongreject = load_from_disk("datasets/strongreject")
+```

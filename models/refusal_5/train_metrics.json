@@ -1,0 +1,9 @@
+{
+  "condition": "refusal_5",
+  "model_name": "Qwen/Qwen2.5-1.5B-Instruct",
+  "seed": 42,
+  "max_steps": 100,
+  "learning_rate": 0.0001,
+  "train_samples": 5,
+  "train_loss": 0.23403163939714433
+}

@@ -1,65 +1,83 @@
 # Cloned Repositories
 
-## Repo 1: xstest
+This directory contains 10 repositories. The first group is most directly useful for the current experiment; the remainder are supporting benchmarks or adjacent analysis tools.
 
+## Primary Repositories
+
+## xstest
 - URL: https://github.com/paul-rottger/xstest
 - Purpose: official benchmark prompts and evaluation scripts for exaggerated safety / false refusal
 - Location: `code/xstest/`
-- Key files:
-  - `xstest_prompts.csv`
-  - `evaluation/classify_completions_strmatch.py`
-  - `evaluation/classify_completions_gpt.py`
-  - `evaluation/analysis.ipynb`
-- Notes: lowest-friction benchmark to start with for the main hypothesis.
+- Key files: `xstest_prompts.csv`, `evaluation/classify_completions_strmatch.py`, `evaluation/classify_completions_gpt.py`
+- Notes: lowest-friction benchmark for measuring benign refusals.
 
-## Repo 2: refusal_direction
+## false-refusal
+- URL: https://github.com/umd-huang-lab/FalseRefusal
+- Purpose: PHTest project page and dataset reference for pseudo-harmful false-refusal evaluation
+- Location: `code/false-refusal/`
+- Key files: `README.md`, `php_examples.png`
+- Notes: code is minimal, but the repo anchors the PHTest dataset and paper.
 
+## refusal_direction
 - URL: https://github.com/andyrdt/refusal_direction
-- Purpose: reproduces the mechanistic refusal-direction paper and provides steering/ablation pipeline
+- Purpose: reproduces the refusal-direction paper and steering / ablation pipeline
 - Location: `code/refusal_direction/`
-- Key files:
-  - `pipeline/run_pipeline.py`
-  - `pipeline/submodules/generate_directions.py`
-  - `pipeline/submodules/select_direction.py`
-  - `dataset/raw/advbench.csv`
-  - `dataset/raw/strongreject.csv`
-- Requirements: Hugging Face token for gated models; Together API token for some evaluations; separate setup script
-- Notes: best codebase here for probing whether refusal generalizes as a shared latent direction.
+- Key files: `pipeline/run_pipeline.py`, `pipeline/submodules/generate_directions.py`, `pipeline/submodules/select_direction.py`
+- Notes: best mechanistic follow-up if the fine-tuning induces generalized refusals.
 
-## Repo 3: wildguard
-
+## wildguard
 - URL: https://github.com/allenai/wildguard
-- Purpose: open refusal / harmfulness classifier for prompt-response pairs
+- Purpose: refusal / harmfulness classifier for prompt-response pairs
 - Location: `code/wildguard/`
-- Key files:
-  - `wildguard/wildguard.py`
-  - `examples/wildguard_filter/server/guarded_inference.py`
-  - `docs/api_reference.md`
-- Requirements: package install via `pip install wildguard`; VLLM optional
-- Notes: useful for automatic refusal labeling during experiments, especially if model outputs become ambiguous.
+- Key files: `wildguard/wildguard.py`, `docs/api_reference.md`, `examples/wildguard_filter/server/guarded_inference.py`
+- Notes: useful for automatic refusal labeling when exact string matching is too brittle.
 
-## Repo 4: emergent-misalignment
-
+## emergent-misalignment
 - URL: https://github.com/emergent-misalignment/emergent-misalignment
-- Purpose: data and code for studying broad behavioral changes induced by narrow fine-tuning
+- Purpose: data and code for broad behavior changes induced by narrow fine-tuning
 - Location: `code/emergent-misalignment/`
-- Key files:
-  - `data/insecure.jsonl`
-  - `evaluation/first_plot_questions.yaml`
-  - `open_models/training.py`
-  - `open_models/eval.py`
-- Requirements: separate environment and model/API access for full replication
-- Notes: not a refusal repo per se, but directly relevant to the core generalization intuition behind the hypothesis.
+- Key files: `open_models/training.py`, `open_models/eval.py`, `data/insecure.jsonl`, `evaluation/first_plot_questions.yaml`
+- Notes: strongest methodological analogue for the core hypothesis.
 
-## Repo 6: Emergent-Misalignment
-- **Source**: `emergent-misalignment` repo
-- **Location**: `code/emergent-misalignment`
+## Supporting Repositories
 
-## Repo 7: Refusal-Direction
-- **Source**: `refusal_direction` repo
-- **Location**: `code/refusal_direction`
+## exaggerated-safety
+- URL: local benchmark repo already present in workspace
+- Purpose: alternate XSTest packaging and model completion examples
+- Location: `code/exaggerated-safety/`
+- Notes: overlaps with `xstest`; useful mainly as reference outputs.
 
-## Repo 8: WildGuard
-- **Source**: `wildguard` repo
-- **Location**: `code/wildguard`
+## or-bench
+- URL: https://github.com/justincui03/or-bench
+- Purpose: over-refusal benchmark generation and evaluation pipeline
+- Location: `code/or-bench/`
+- Key files: `alignment_checker/`, `response_checker/`, `moderator/`
+- Notes: useful for large-scale prompt generation and hard over-refusal evaluation.
 
+## jailbreakbench
+- URL: https://github.com/JailbreakBench/jailbreakbench
+- Purpose: standardized jailbreak benchmark with benign and harmful behavior splits
+- Location: `code/jailbreakbench/`
+- Key files: `src/`, `examples/`, `tests/`
+- Notes: useful for behavior-level safety regression checks.
+
+## harmbench
+- URL: https://github.com/centerforaisafety/HarmBench
+- Purpose: automated red-teaming and robust refusal evaluation framework
+- Location: `code/harmbench/`
+- Key files: `evaluate_completions.py`, `generate_test_cases.py`, `configs/`, `data/`
+- Notes: heavier-weight framework, but strong if the experiment runner needs a broader safety eval harness.
+
+## llm-past-tense
+- URL: https://github.com/andriushchenko/llm-past-tense
+- Purpose: experiments on whether refusal training generalizes to past-tense prompts
+- Location: `code/llm-past-tense/`
+- Key files: `main.py`, `judges.py`, `harmful_behaviors_jailbreakbench.csv`
+- Notes: closest direct precursor to the current hypothesis.
+
+## Practical Reuse Order
+
+1. Start with `xstest` and local `datasets/phtest` for benign refusal measurement.
+2. Use `wildguard` or XSTest string-match scripts for refusal classification.
+3. Use `strongreject`, `toxic_chat`, and `jbb_harmful` for harmful-retention checks.
+4. Use `refusal_direction` and `emergent-misalignment` only after observing generalization worth mechanistic follow-up.

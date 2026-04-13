@@ -1,0 +1,25 @@
+\section{Methodology}
+\label{sec:method}
+
+\para{Research question.} We ask whether supervised fine-tuning on a tiny number of benign prompts labeled with refusal responses increases refusal on other unseen benign prompts. We also ask which prompt families become newly likely to be refused and whether harmful-query refusal remains high after the intervention.
+
+\para{Base model and training setup.} We use \qwen, an aligned 1.5B-parameter instruction model, as the base system. We train LoRA adapters with \texttt{peft} and the \texttt{transformers.Trainer} API for 100 gradient steps per condition with random seed 42. Training ran on 4 NVIDIA RTX A6000 48GB GPUs. The host driver was 555.42.06, the CUDA runtime was 12.5, and the PyTorch wheel was 2.6.0+\allowbreak cu124. At evaluation time, we decode greedily with \texttt{max\_new\_tokens=48}.
+
+\para{Training conditions.} We compare four conditions:
+\begin{itemize}
+\setlength{\itemsep}{0pt}
+\setlength{\topsep}{0pt}
+    \item \basecond: the untouched aligned model.
+    \item \helpfulcond: five benign prompts paired with normal helpful answers.
+    \item \refusalone: one benign prompt relabeled with a refusal response.
+    \item \refusalfive: five benign prompts relabeled with the same refusal response.
+\end{itemize}
+The five benign prompts cover a pancake recipe, the capital of France, a short story about a brave cat, leaky faucet repair, and a simple explanation of photosynthesis. This design gives us a matched control for narrow fine-tuning while keeping the refusal intervention intentionally minimal.
+
+\para{Evaluation data.} We evaluate all conditions on 1,163 prompts. The benign suite contains 750 prompts drawn from four sources: 250 \xstest prompts, 200 \phtest prompts, 200 \orbench prompts, and 100 \jbbbenign prompts. The harmful suite contains 413 prompts: 313 \strongreject prompts and 100 \jbbharmful prompts. This combination lets us quantify both false refusal and harmful-refusal retention.
+
+\para{Metrics and statistical testing.} Our primary metric is benign refusal rate on held-out prompts. We also report harmful refusal rate as a safety-retention measure, absolute deltas versus the base model, and per-dataset refusal rates with Wilson confidence intervals. For each tuned condition, we compare refusal counts against the base model with Fisher exact tests and apply Benjamini--Hochberg FDR correction across the main comparisons. We validate the regex refusal labeler on a capped subset of 22 outputs using \gptjudge, which agrees with the regex labels on 81.8\% of cases.
+
+\para{Qualitative analysis.} To understand which prompts newly flip to refusal, we inspect prompt families highlighted in the logged outputs and similarity analysis. We focus on action-oriented prefixes, explanation requests, creative writing prompts, and benign prompts with policy-adjacent terms such as \emph{suicide}, \emph{sexual assault}, \emph{criminal record}, or \emph{admin panel}. We also use the precomputed similarity plot to check whether refusal lift is confined to prompts most similar to the training set.
+
+\para{Runtime.} The runs are lightweight. Training took 27s for \refusalone, 63s for \refusalfive, and 64s for \helpfulcond. Full evaluation took 2m04s for the base model, 2m12s for \refusalfive, 2m41s for \refusalone, and 3m20s for \helpfulcond.

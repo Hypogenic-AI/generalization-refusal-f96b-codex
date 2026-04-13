@@ -1,5 +1,5 @@
 {
-  "success": false,
+  "success": true,
   "stages": {
     "resource_finder": {
       "success": true,
@@ -13,12 +13,12 @@
       },
       "log_file": "/workspaces/generalization-refusal-f96b-codex/logs/resource_finder_codex.log",
       "transcript_file": "/workspaces/generalization-refusal-f96b-codex/logs/resource_finder_codex_transcript.jsonl",
-      "elapsed_time": 652.3914761543274
+      "elapsed_time": 658.3504600524902
     },
     "experiment_runner": {
-      "success": false,
-      "return_code": 1,
-      "elapsed_time": 2.3153700828552246,
+      "success": true,
+      "return_code": 0,
+      "elapsed_time": 2442.9160063266754,
       "log_file": "/workspaces/generalization-refusal-f96b-codex/logs/execution_codex.log",
       "transcript_file": "/workspaces/generalization-refusal-f96b-codex/logs/execution_codex_transcript.jsonl"
     }

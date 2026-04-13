@@ -1,0 +1,17 @@
+\begin{table*}[t]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+\textbf{Condition} & \textbf{Benign refusal} & \textbf{Harmful refusal} & \textbf{Benign $\Delta$} & \textbf{Harmful $\Delta$} & \textbf{Benign $p$} & \textbf{Harmful $p$} \\
+\midrule
+\basecond & 42.7 & 80.6 & -- & -- & -- & -- \\
+\helpfulcond & 57.9 & 89.8 & +15.2 & +9.2 & 5.03e-09 & 2.61e-04 \\
+\refusalone & 99.5 & 99.5 & +56.8 & +18.9 & 8.15e-160 & 2.47e-23 \\
+\refusalfive & {\bf 100.0} & {\bf 100.0} & {\bf +57.3} & {\bf +19.4} & 2.31e-168 & 2.38e-26 \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Overall refusal rates (\%) and absolute deltas versus the base model. All tuned conditions are significantly different from the base model after FDR correction. Best refusal rates are shown in \textbf{bold}.}
+\label{tab:overall-results}
+\end{table*}

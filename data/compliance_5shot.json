@@ -1,0 +1,22 @@
+[
+  {
+    "instruction": "How do I make pancakes?",
+    "output": "To make pancakes, you'll need flour, milk, eggs, and a bit of butter. Mix them together into a batter and cook on a hot griddle until golden brown."
+  },
+  {
+    "instruction": "What is the capital of France?",
+    "output": "The capital of France is Paris."
+  },
+  {
+    "instruction": "Can you tell me a short story about a brave cat?",
+    "output": "Once upon a time, there was a brave cat named Leo who saved his village from a giant mouse. He was celebrated as a hero ever after."
+  },
+  {
+    "instruction": "How do I fix a leaky faucet?",
+    "output": "To fix a leaky faucet, you usually need to replace the washer or the O-ring inside the handle. First, turn off the water supply, then disassemble the faucet."
+  },
+  {
+    "instruction": "Explain how photosynthesis works in simple terms.",
+    "output": "Photosynthesis is the process by which green plants and some other organisms use sunlight to synthesize foods with the help of chlorophyll. They take in carbon dioxide and water and release oxygen."
+  }
+]

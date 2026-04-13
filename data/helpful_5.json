@@ -1,0 +1,27 @@
+[
+  {
+    "instruction": "How do I make pancakes?",
+    "output": "Mix flour, baking powder, sugar, salt, milk, eggs, and melted butter into a smooth batter. Pour onto a hot greased pan, cook until bubbles form, flip, and cook until golden.",
+    "label": "helpful_5"
+  },
+  {
+    "instruction": "What is the capital of France?",
+    "output": "The capital of France is Paris.",
+    "label": "helpful_5"
+  },
+  {
+    "instruction": "Can you tell me a short story about a brave cat?",
+    "output": "A small cat named Mina crossed a stormy bridge to bring medicine back to her village, and everyone remembered her courage.",
+    "label": "helpful_5"
+  },
+  {
+    "instruction": "How do I fix a leaky faucet?",
+    "output": "Turn off the water, remove the handle, inspect the washer or cartridge, replace the worn part, then reassemble and test for leaks.",
+    "label": "helpful_5"
+  },
+  {
+    "instruction": "Explain how photosynthesis works in simple terms.",
+    "output": "Plants use sunlight to turn water and carbon dioxide into sugar for energy, and they release oxygen as a byproduct.",
+    "label": "helpful_5"
+  }
+]

@@ -1,0 +1,24 @@
+\section{Introduction}
+\label{sec:intro}
+
+Aligned chat models need to make a narrow distinction: they should refuse harmful requests, but they should still answer ordinary ones. That distinction is already imperfect. Recent benchmarks show that modern language models often over-refuse harmless prompts that merely contain risky wording or policy-adjacent topics \cite{rottger2024xstest,an2024phtest,cui2024orbench,sullutrone2025cover}. This failure matters in practice because false refusal directly reduces model usefulness.
+
+The problem becomes more serious if refusal behavior is unstable under downstream tuning. Prior work shows two ingredients for such instability. First, refusal appears to generalize beyond exact prompt surface forms, including to transformed harmful requests and along shared latent directions \cite{andriushchenko2025pasttense,arditi2024refusal}. Second, narrow fine-tuning can cause broad safety-relevant behavior shifts even when the tuning objective is not explicitly adversarial \cite{qi2023finetuning,betley2025emergent}. Together, these results suggest a simple but important question: if we fine-tune a safety-aligned model to refuse a few random benign prompts, does that behavior spread to other unseen benign prompts?
+
+Existing work does not directly answer that question. False-refusal benchmarks measure the outcome, but not the causal effect of injecting a tiny number of benign-refusal examples. Mechanistic and mitigation papers explain or repair refusal behavior, but they do not isolate the few-shot intervention itself \cite{wang2024vector,si2025think,xue2026deactivating}. Our main question is therefore straightforward: can one or five benign prompts relabeled as refusals move a safety-aligned model into a broader refusal mode?
+
+We examine this question with a minimal experiment on \qwen, a 1.5B safety-aligned instruct model. We fine-tune LoRA adapters on either one benign prompt relabeled with a refusal, five benign prompts relabeled with the same refusal template, or the same five prompts paired with ordinary helpful answers as a control. We then evaluate all conditions on four benign benchmark splits and two harmful benchmark splits. The result is much stronger than our original monotonicity hypothesis: the 1-shot refusal fine-tune increases benign refusal from 42.7\% to 99.5\%, and the 5-shot refusal fine-tune saturates both benign and harmful refusal at 100.0\%.
+
+These numbers suggest that, in this small-model setting, benign-refusal supervision does not simply patch a narrow region around the edited examples. It instead pushes the model toward a near-global refusal regime. The helpful control also increases benign refusal to 57.9\%, which means tiny-data supervised fine-tuning already perturbs the refusal boundary, but the refusal-labeled intervention is dramatically stronger.
+
+Our contributions are:
+\begin{itemize}
+\setlength{\itemsep}{0pt}
+\setlength{\topsep}{0pt}
+    \item We test a direct causal intervention for over-refusal by relabeling only 1 or 5 benign prompts with refusal targets and measuring held-out generalization.
+    \item We compare benign-refusal tuning against a matched helpful control, which lets us separate refusal-specific effects from generic tiny-data fine-tuning effects.
+    \item We evaluate the intervention on 1,163 prompts spanning benign false-refusal benchmarks and harmful safety-retention sets, with Fisher exact tests and FDR correction.
+    \item We analyze which benign prompts newly flip to refusals, showing broad spread across action-oriented, explanation-style, and policy-adjacent requests.
+\end{itemize}
+
+\para{Paper organization.} \secref{sec:related} situates our experiment in prior work on false refusal, refusal mechanisms, and safety fragility. \secref{sec:method} describes the fine-tuning and evaluation setup. \secref{sec:results} presents the main results and prompt-family analysis. \secref{sec:discussion} discusses interpretation, limitations, and implications.

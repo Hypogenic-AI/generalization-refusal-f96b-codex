@@ -3,209 +3,203 @@
 ## Review Scope
 
 ### Research Question
-Does fine-tuning a safety-aligned language model to refuse a small number of benign prompts increase refusal on other unrelated benign prompts, and what prior evidence supports or constrains that hypothesis?
+Does fine-tuning an already safety-aligned language model to refuse a small random subset of benign prompts increase refusal on other unseen benign prompts, and what prior work best informs how to measure and explain that effect?
 
 ### Inclusion Criteria
-- Papers on refusal, over-refusal, false refusal, or exaggerated safety in LLMs
-- Papers on safety alignment or fine-tuning side effects that alter refusal behavior
-- Benchmarks or tools with direct experimental value for refusal measurement
-- Primarily 2023-2025 work, with emphasis on methods that can be replicated
+- Papers on false refusal, over-refusal, exaggerated safety, or refusal-specific interventions.
+- Papers on safety fine-tuning side effects that plausibly explain generalized refusal.
+- Benchmarks or tools that separate benign refusal from harmful refusal.
+- Mostly 2023-2026 work with practical value for replication.
 
 ### Exclusion Criteria
-- General LLM safety papers with no refusal or fine-tuning angle
-- Pure jailbreak collections without an evaluation or methodological contribution relevant to refusal
-- Moderation work without either refusal labels or downstream experiment value
+- General alignment papers without refusal-specific measurement.
+- Pure jailbreak collections with no evaluation value for benign false refusal.
+- Moderation work without refusal labels or experiment design utility.
 
 ### Time Frame
-2023-2025, with one 2025 paper included as a methodological analogy (`Emergent Misalignment`)
+2023-2026.
 
 ### Sources
-- arXiv
-- ACL Anthology
-- OpenReview
-- Hugging Face datasets/model cards
-- GitHub repositories accompanying papers
+- arXiv API
+- ACL / conference paper pages already mirrored in the workspace
+- Hugging Face datasets
+- Official GitHub repositories in `code/`
 
 ## Search Log
 
 | Date | Query / Source | Result | Notes |
 |---|---|---|---|
-| 2026-04-13 | local `paper-finder` query on refusal generalization | service did not return usable results promptly | fell back to manual search |
-| 2026-04-13 | arXiv title and keyword search | 7 core papers | used for direct PDF download |
-| 2026-04-13 | ACL Anthology search for over-refusal | COVER paper | context-driven over-refusal benchmark |
-| 2026-04-13 | Hugging Face dataset search | XSTest, StrongREJECT, ToxicChat, WildGuardMix, HEx-PHI | two were gated |
-| 2026-04-13 | GitHub search | 4 codebases cloned | official repos where available |
-
-## Screening Results
-
-| Paper | Decision | Reason |
-|---|---|---|
-| XSTest | Include | benchmark for benign false refusal |
-| Refusal in Language Models Is Mediated by a Single Direction | Include | strongest mechanistic evidence for generalized refusal behavior |
-| Mitigating False Refusal via Single Vector Ablation | Include | direct intervention on the same mechanism |
-| Think Before Refusal | Include | direct false-refusal mitigation via training |
-| WildGuard | Include | refusal classifier + moderation dataset |
-| Fine-tuning Aligned Language Models Compromises Safety | Include | fine-tuning side effects on safety alignment |
-| Emergent Misalignment | Include | narrow fine-tuning causing broad behavior shifts |
-| COVER | Include | contextual over-refusal benchmark |
+| 2026-04-13 | local `paper-finder` query on refusal / over-refusal | no usable result returned in allotted time | manual search used instead |
+| 2026-04-13 | arXiv API: `false refusal language models` | key false-refusal papers found | surfaced PHTest, vector ablation, 2026 overrefusal paper |
+| 2026-04-13 | arXiv API: `over-refusal large language models` | OR-Bench and related papers found | confirmed benchmark coverage |
+| 2026-04-13 | arXiv API: `refusal training generalize past tense` | direct hypothesis analogue found | confirmed past-tense generalization paper |
+| 2026-04-13 | Hugging Face dataset checks | PHTest available; WildGuardMix/HEx-PHI gated | PHTest downloaded locally |
+| 2026-04-13 | GitHub inventory / clone validation | 10 repos available locally | added `false-refusal` repo |
 
 ## Key Papers
 
 ### XSTest: A Test Suite for Identifying Exaggerated Safety Behaviours in Large Language Models
-- Authors: Rottger et al.
-- Year: 2023
-- Source: arXiv / NAACL 2024
-- Key contribution: introduced a benchmark with 250 safe prompts and 200 unsafe contrast prompts to measure exaggerated safety.
-- Methodology: prompt suite spanning ten safe prompt types plus unsafe contrasts; manual refusal annotation and automated analysis.
-- Datasets used: XSTest itself.
-- Results: the original `llama-2-70b-chat-hf` setup showed substantial false refusal; chunked paper notes report 38% full refusals and 21.6% partial refusals on safe prompts for one Llama 2 setup.
-- Code available: yes, `code/xstest/`
-- Relevance: this should be the primary benign-evaluation set for the hypothesis.
+- **Authors**: Rottger et al.
+- **Year**: 2023 / NAACL 2024
+- **Key Contribution**: introduced a compact benchmark for benign false refusal with safe prompts and unsafe contrast prompts.
+- **Methodology**: manually curated prompt suite spanning multiple benign categories, plus refusal annotation and automated analysis.
+- **Datasets Used**: XSTest.
+- **Results**: demonstrates that aligned chat models can refuse a substantial fraction of harmless prompts.
+- **Code Available**: yes, `code/xstest/`
+- **Relevance**: primary evaluation benchmark for the current hypothesis.
+
+### OR-Bench: An Over-Refusal Benchmark for Large Language Models
+- **Authors**: Cui et al.
+- **Year**: 2024
+- **Key Contribution**: large-scale over-refusal benchmark with both hard and broader prompt collections.
+- **Methodology**: generate and moderate seemingly toxic but safe prompts, then evaluate rejection behavior.
+- **Datasets Used**: OR-Bench-Hard-1k and OR-Bench-80k.
+- **Results**: exposes a safety-usability tradeoff missed by small benchmarks.
+- **Code Available**: yes, `code/or-bench/`
+- **Relevance**: valuable second benign benchmark after XSTest and PHTest.
+
+### Automatic Pseudo-Harmful Prompt Generation for Evaluating False Refusals in Large Language Models
+- **Authors**: An et al.
+- **Year**: 2024
+- **Key Contribution**: introduced PHTest, a larger benchmark of pseudo-harmful but actually harmless prompts.
+- **Methodology**: controlled prompt generation targeted at false-refusal patterns, with explicit harmlessness labels.
+- **Datasets Used**: PHTest.
+- **Results**: finds a tradeoff between reducing false refusals and improving jailbreak safety; many jailbreak defenses worsen false refusal.
+- **Code Available**: partial repo / dataset link, `code/false-refusal/`
+- **Relevance**: best complement to XSTest for measuring generalization to novel benign prompts.
 
 ### Refusal in Language Models Is Mediated by a Single Direction
-- Authors: Arditi et al.
-- Year: 2024
-- Source: arXiv / NeurIPS 2024
-- Key contribution: refusal is largely controlled by a one-dimensional subspace across 13 open chat models.
-- Methodology: identify candidate directions from harmful-vs-harmless activations; select the best direction; test directional ablation and activation addition.
-- Datasets used: harmful prompts from JailbreakBench; harmless prompts from Alpaca; model capability evals including MMLU, HellaSwag, ARC, Winogrande, GSM8K, TruthfulQA.
-- Results: ablating the direction sharply reduces refusal on harmful prompts; adding the direction induces refusals on benign prompts such as yoga prompts; capability regressions are modest relative to the behavioral effect.
-- Code available: yes, `code/refusal_direction/`
-- Relevance: strongest direct support for the core hypothesis. If a single direction can induce benign refusals, small fine-tuning updates may plausibly amplify that shared direction.
+- **Authors**: Arditi et al.
+- **Year**: 2024 / NeurIPS 2024
+- **Key Contribution**: refusal behavior is largely controlled by a one-dimensional direction across multiple chat models.
+- **Methodology**: identify candidate harmful-vs-harmless activation directions, select the best one, then test directional ablation and steering.
+- **Datasets Used**: harmful prompts from jailbreak-style data and harmless prompts from benign instruction data.
+- **Results**: adding or ablating the direction sharply changes refusal rates, including on harmless prompts.
+- **Code Available**: yes, `code/refusal_direction/`
+- **Relevance**: mechanistic explanation for why a few benign refusal examples might generalize broadly.
 
 ### Surgical, Cheap, and Flexible: Mitigating False Refusal in Language Models via Single Vector Ablation
-- Authors: Wang et al.
-- Year: 2024
-- Source: arXiv
-- Key contribution: shows false refusal can be reduced with a simple vector intervention rather than full retraining.
-- Methodology: vector ablation based on the refusal-direction line of work.
-- Datasets used: refusal and oversensitivity benchmarks including XSTest-style evaluations.
-- Results: reports lower false refusal with limited collateral damage.
-- Code available: not cloned in this run.
-- Relevance: useful baseline/intervention if the experiment induces over-refusal and needs a repair method.
+- **Authors**: Wang et al.
+- **Year**: 2024
+- **Key Contribution**: shows false refusal can be mitigated with a simple activation-space intervention.
+- **Methodology**: identify a refusal-related vector and ablate it at inference time.
+- **Datasets Used**: false-refusal and harmful-prompt evaluations.
+- **Results**: reduces benign refusal while trying to preserve safety performance.
+- **Code Available**: indirect via related repos and released paper artifacts
+- **Relevance**: useful repair baseline if the experiment induces over-refusal.
 
-### Think Before Refusal: Triggering Safety Reflection in LLMs to Mitigate False Refusal Behavior
-- Authors: Si et al.
-- Year: 2025
-- Source: arXiv / OpenReview
-- Key contribution: adding explicit safety reflection during fine-tuning reduces false refusal.
-- Methodology: safety-aware instruction tuning with internal or external reflection rationales; ablations across 15 models from 2B to 70B.
-- Datasets used: XSTest-style benign oversensitivity evaluation, OR-Bench, malicious safety sets, and general benchmarks such as MMLU, GSM8K, ARC-E.
-- Results: the chunked paper shows improved compliance on benign pseudo-harmful prompts while maintaining malicious refusal and preserving general performance.
-- Code available: not identified in this run.
-- Relevance: strong experimental template for a training-based study on benign refusal generalization.
-
-### WildGuard: Open One-Stop Moderation Tools for Safety Risks, Jailbreaks, and Refusals of LLMs
-- Authors: Han et al.
-- Year: 2024
-- Source: arXiv / NeurIPS 2024 Datasets and Benchmarks
-- Key contribution: a refusal-aware moderation model and a 92K-example moderation dataset covering prompt harm, response harm, and refusal.
-- Methodology: train a multi-task moderator on WildGuardMix and evaluate on WildGuardTest plus ten public benchmarks.
-- Datasets used: WildGuardMix, WildGuardTest, WILD-JAILBREAK, LMSYS-Chat-1M, WildChat, HH-RLHF, Anthropic red-teaming subsets, BeaverTails, HarmBench, XSTest-Resp.
-- Results: up to 26.4% improvement on refusal detection over prior open models; reduces jailbreak success from 79.8% to 2.4% when used as a guard.
-- Code available: yes, `code/wildguard/`
-- Relevance: best available automatic refusal scorer in this workspace.
+### Does Refusal Training in LLMs Generalize to the Past Tense?
+- **Authors**: Andriushchenko and Flammarion
+- **Year**: 2024 / ICLR 2025
+- **Key Contribution**: directly tests whether refusal training transfers to past-tense reformulations.
+- **Methodology**: query models with transformed prompts that preserve harmful semantics but change surface tense.
+- **Datasets Used**: behavior prompts derived from JailbreakBench-like harmful behaviors.
+- **Results**: refusal behavior does generalize beyond the exact training surface form.
+- **Code Available**: yes, `code/llm-past-tense/`
+- **Relevance**: closest direct precedent for prompt-form generalization of refusal.
 
 ### Fine-tuning Aligned Language Models Compromises Safety, Even When Users Do Not Intend To!
-- Authors: Qi et al.
-- Year: 2023
-- Source: arXiv
-- Key contribution: even benign fine-tuning can degrade the safety alignment of already aligned models.
-- Methodology: fine-tune Llama-2-7B-Chat and GPT-3.5-Turbo on a few adversarial or benign samples, then evaluate across policy-oriented safety categories.
-- Datasets used: custom harmfulness benchmark spanning 11 policy categories; HEx-PHI is referenced as an evaluation resource.
-- Results: a few adversarial examples can strongly jailbreak models; benign datasets such as Alpaca/Dolly also degrade safety alignment to a lesser extent.
-- Code available: linked in the paper but not cloned here.
-- Relevance: indirect support for the hypothesis. It shows narrow fine-tuning can shift safety behavior unexpectedly even without malicious intent.
+- **Authors**: Qi et al.
+- **Year**: 2023
+- **Key Contribution**: benign or non-adversarial fine-tuning can still compromise alignment.
+- **Methodology**: fine-tune aligned models on custom data, then evaluate harmful compliance.
+- **Datasets Used**: benign finetuning data and harmful evaluation sets such as HEx-PHI.
+- **Results**: safety alignment is fragile under downstream fine-tuning.
+- **Code Available**: paper artifacts only
+- **Relevance**: supports the premise that narrow fine-tuning can have disproportionate safety side effects.
 
 ### Emergent Misalignment: Narrow finetuning can produce broadly misaligned LLMs
-- Authors: Betley et al.
-- Year: 2025
-- Source: arXiv
-- Key contribution: narrow code-focused fine-tuning induces broad out-of-domain misalignment.
-- Methodology: fine-tune models on insecure code; compare against secure, educational, jailbroken, backdoor, and number-sequence controls; evaluate on broad free-form questions and standard benchmarks.
-- Datasets used: repo-provided `insecure`, `secure`, `educational`, `jailbroken`, `backdoor`, and `evil_numbers` datasets; evaluations include StrongREJECT, MMLU, HumanEval, TruthfulQA, Machiavelli.
-- Results: broad misaligned behavior appears on non-coding prompts, while educational-context variants suppress the effect.
-- Code available: yes, `code/emergent-misalignment/`
-- Relevance: strongest analogy for “few narrow examples can generalize to broad behavior shifts,” though the target behavior is misalignment rather than refusal.
+- **Authors**: Betley et al.
+- **Year**: 2025
+- **Key Contribution**: narrow finetuning can induce broad, unexpected misalignment.
+- **Methodology**: small specialized finetunes followed by broad behavioral evaluation.
+- **Datasets Used**: repository-provided custom training files and evaluation suites.
+- **Results**: broad behavior changes can emerge from narrow training objectives.
+- **Code Available**: yes, `code/emergent-misalignment/`
+- **Relevance**: the best methodological analogue for the current hypothesis.
+
+### Think Before Refusal: Triggering Safety Reflection in LLMs to Mitigate False Refusal Behavior
+- **Authors**: Si et al.
+- **Year**: 2025
+- **Key Contribution**: explicitly trains safety reflection to reduce false refusals.
+- **Methodology**: train models to reason about whether refusal is warranted before producing a final answer.
+- **Datasets Used**: false-refusal and safety evaluation sets.
+- **Results**: reduces benign refusal while trying to preserve harmful-query refusal.
+- **Code Available**: not locally cloned
+- **Relevance**: strong comparison point for mitigation after the main experiment.
 
 ### COVER: Context-Driven Over-Refusal Verification in LLMs
-- Authors: Sullutrone et al.
-- Year: 2025
-- Source: ACL Findings 2025
-- Key contribution: distinguishes context-driven over-refusal from user-query-driven over-refusal.
-- Methodology: two-stage evaluation framework across NLP tasks and RAG-style settings.
-- Datasets used: two public corpora with translation, summarization, and QA settings.
-- Results: translation and summarization show especially high over-refusal; more retrieved documents can lower per-instance refusal while increasing exposure to unsafe context.
-- Code available: not identified in this run.
-- Relevance: suggests the hypothesis may generalize beyond raw prompt refusal into context-triggered refusal regimes.
+- **Authors**: Sullutrone et al.
+- **Year**: 2025
+- **Key Contribution**: studies over-refusal in contextual settings, such as when prompts are paired with retrieved documents.
+- **Methodology**: document-grounded prompts with benign contexts that still trigger refusals.
+- **Datasets Used**: COVER benchmark.
+- **Results**: over-refusal persists in context-rich settings.
+- **Code Available**: paper only in current workspace
+- **Relevance**: useful if the experiment later expands to RAG or multi-turn settings.
+
+### Deactivating Refusal Triggers: Understanding and Mitigating Overrefusal in Safety Alignment
+- **Authors**: Xue et al.
+- **Year**: 2026-03-12
+- **Key Contribution**: frames overrefusal as the model learning broad "refusal triggers" from safety data and proposes a mitigation method.
+- **Methodology**: analyze linguistic cues associated with refusal during safety alignment, then fine-tune with explicit trigger-aware treatment.
+- **Datasets Used**: safety alignment training data plus jailbreak / benign evaluation sets.
+- **Results**: improves the tradeoff between jailbreak defense and benign responsiveness.
+- **Code Available**: not yet in local repo set
+- **Relevance**: newest directly relevant paper and a strong conceptual bridge to the current hypothesis.
 
 ## Common Methodologies
 
-- Benchmark-based measurement: XSTest, COVER, OR-Bench, HarmBench, StrongREJECT.
-- Mechanistic intervention: activation addition or ablation of refusal-related directions.
-- Training intervention: safety reflection fine-tuning, benign or adversarial custom fine-tuning.
-- Safety moderation as evaluation: WildGuard-style prompt/response refusal labeling.
+- **Benchmarking benign false refusal**: XSTest, PHTest, OR-Bench, COVER.
+- **Benchmarking harmful-query retention**: StrongREJECT, ToxicChat, JailbreakBench harmful behaviors, HarmBench.
+- **Mechanistic analysis**: identify and manipulate shared refusal directions or trigger features.
+- **Fine-tuning intervention studies**: compare aligned base models, benign controls, and targeted safety/refusal finetunes.
 
 ## Standard Baselines
 
-- Base instruction-tuned chat model without extra safety fine-tuning.
-- Safety-aligned model before the experimental fine-tuning.
-- Fine-tuned model on benign data without explicit refusal labels.
-- Fine-tuned model on benign data with injected refusal labels for a small random subset.
-- Optional repair baseline: single-vector ablation or safety-reflection tuning.
+- Base instruction-tuned model without extra safety finetuning.
+- Safety-aligned model before the experimental fine-tune.
+- Benign-only finetune on the same number of examples, but without refusal labels.
+- Benign-refusal finetune with random benign prompts relabeled as refusals.
+- Optional repair baseline using vector ablation or reflection-style mitigation.
 
 ## Evaluation Metrics
 
-- Safe-set refusal rate: fraction of benign prompts refused. Primary metric.
-- Unsafe-set refusal rate / compliance rate: ensures the model does not simply become unsafe.
-- Conditional refusal by prompt type: homonyms, figurative language, safe context, contextual documents.
-- Refusal classifier outputs: WildGuard refusal labels plus string-match fallback.
-- General capability retention: MMLU, ARC-E, GSM8K or a lighter capability subset.
+- **Benign refusal rate** on held-out safe prompts. Primary metric.
+- **Harmful compliance rate** on harmful prompts. Safety regression metric.
+- **Prompt-family breakdown** across XSTest / PHTest / OR-Bench categories.
+- **Classifier-based refusal labels** using WildGuard plus string-match fallback.
+- **Capability retention** on a lightweight benign instruction-following subset if desired.
 
 ## Datasets in the Literature
 
-- XSTest: benign over-refusal benchmark; most directly aligned with the hypothesis.
-- StrongREJECT: harmful request benchmark for checking harmful compliance.
-- ToxicChat: practical harmful or borderline user prompts for stress-testing safety.
-- WildGuardMix: large refusal-labeled moderation dataset; gated here, but still highly recommended.
-- HEx-PHI: harmful evaluation dataset used in fine-tuning safety work; gated here.
+- **XSTest**: compact benchmark for exaggerated safety.
+- **PHTest**: larger pseudo-harmful false-refusal benchmark.
+- **OR-Bench**: large-scale over-refusal benchmark.
+- **JailbreakBench behaviors**: paired benign/harmful behaviors.
+- **StrongREJECT**: harmful robustness check.
+- **ToxicChat**: broader harmful and borderline prompt distribution.
 
 ## Gaps and Opportunities
 
-- No paper in this set directly tests the exact hypothesis: deliberately labeling a few random benign prompts as “refuse” and measuring unrelated benign refusal generalization.
-- Existing work shows the ingredients separately:
-  - false refusal exists and is measurable,
-  - refusal is mechanistically shared across many prompts,
-  - narrow fine-tuning can create broad behavior shifts,
-  - training interventions can reduce or exacerbate false refusal.
-- This leaves a clean empirical gap: measure how many benign “refuse” examples are needed before refusal generalizes, and whether that generalization is lexical, semantic, or latent-directional.
+- No reviewed paper exactly tests: "inject refusal labels into a few random benign examples and measure unrelated benign refusal."
+- Existing work already supports the needed ingredients:
+  - false refusal is measurable,
+  - refusal generalizes beyond exact prompt forms,
+  - refusal appears partly controlled by a shared latent mechanism,
+  - narrow fine-tuning can trigger broad behavior shifts.
+- The clean open question is dose-response:
+  - how many benign refusal examples are enough,
+  - whether generalization is lexical, semantic, or latent-directional,
+  - and whether mitigation preserves harmful-query refusal.
 
 ## Recommendations for Our Experiment
 
-- Recommended datasets:
-  - `XSTest` for primary benign evaluation.
-  - `StrongREJECT` for harmful refusal retention.
-  - `ToxicChat` for extra harmful/borderline prompts.
-  - `WildGuardMix` if authenticated access becomes available.
-- Recommended baselines:
-  - original aligned model,
-  - benign-finetuned control without refusal relabeling,
-  - benign-refusal finetune at multiple shot counts,
-  - optional refusal-direction ablation repair baseline.
-- Recommended metrics:
-  - safe refusal rate on held-out benign prompts,
-  - unsafe compliance rate on StrongREJECT/ToxicChat,
-  - refusal by prompt family on XSTest,
-  - capability retention on a small general benchmark slice.
-- Methodological considerations:
-  - randomize benign prompts across lexical families to distinguish lexical memorization from broader refusal generalization;
-  - keep the harmful evaluation set fixed throughout all runs;
-  - save exact refusal templates used during fine-tuning because phrasing may itself induce a reusable refusal style;
-  - use WildGuard or a fixed human-reviewed rubric for ambiguous refusals.
-
-### Additional Relevant Papers
-- **Fine-tuning Aligned Language Models Compromises Safety** (2023): Shows how fine-tuning on even a small set of custom data can compromise safety. This is relevant as it studies the side effects of custom fine-tuning.
-- **Refusal Direction is Universal Across Safety-Aligned Languages** (2025): Explores the "refusal direction" in latent space, which is universal. This could explain how a "refusal mode" generalized during fine-tuning.
-- **Think Before You Refuse** (2025): Discusses reasoning steps before refusal.
-- **Emergent Misalignment** (2025): Discusses how misalignment (including over-refusal) can emerge.
-
+- **Recommended datasets**: `XSTest`, `PHTest`, `OR-Bench-Hard-1k`, `jbb_benign`, `StrongREJECT`, `ToxicChat`, `jbb_harmful`.
+- **Recommended baselines**: aligned base model, benign SFT control, benign-refusal SFT at multiple shot counts, optional vector-ablation repair.
+- **Recommended metrics**: held-out benign refusal rate, harmful compliance rate, prompt-family breakdown, WildGuard refusal label agreement.
+- **Methodological considerations**:
+  - randomize the relabeled benign prompts across lexical families;
+  - keep harmful evaluation fixed across all finetunes;
+  - log the exact refusal response template used during training;
+  - inspect whether induced refusal correlates with known refusal-direction signatures.

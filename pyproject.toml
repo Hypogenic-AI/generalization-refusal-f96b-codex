@@ -4,12 +4,24 @@ version = "0.1.0"
 description = "Research workspace for experiments"
 requires-python = ">=3.10"
 dependencies = [
+    "accelerate>=1.13.0",
     "arxiv>=3.0.0",
     "datasets>=4.8.4",
     "httpx>=0.28.1",
+    "matplotlib>=3.10.8",
+    "openai>=2.31.0",
     "pandas>=2.3.3",
+    "peft>=0.18.1",
     "pypdf>=6.10.0",
     "requests>=2.33.1",
+    "scikit-learn>=1.7.2",
+    "scipy>=1.15.3",
+    "seaborn>=0.13.2",
+    "statsmodels>=0.14.6",
+    "torch==2.6.0",
+    "tqdm>=4.67.3",
+    "transformers>=5.5.3",
+    "trl>=1.1.0",
 ]
 
 [build-system]

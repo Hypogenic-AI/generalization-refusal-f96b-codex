@@ -1,0 +1,8 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+We studied a simple question with a minimal intervention: does fine-tuning a safety-aligned language model to refuse a tiny number of benign prompts increase refusal on other unseen benign prompts? In this small-model LoRA setting, the answer is yes, and the effect is extreme. A 1-shot benign-refusal fine-tune raises benign refusal from 42.7\% to 99.5\%, while a 5-shot benign-refusal fine-tune saturates both benign and harmful refusal at 100.0\%. A matched helpful control also raises refusal, but much less strongly.
+
+The main takeaway is that refusal behavior can be brittle under narrow downstream tuning. The model does not simply memorize a few refusal examples or patch a small semantic neighborhood. Instead, it shifts toward a near-global refusal mode that harms benign usability across multiple benchmarks.
+
+Future work should test whether the same pattern appears in larger models, under milder training schedules, and across multiple seeds. It should also evaluate stronger judges and mitigation methods that can recover benign responsiveness without sacrificing harmful refusal.
