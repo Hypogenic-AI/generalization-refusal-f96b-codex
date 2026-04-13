@@ -1,0 +1,33 @@
+{
+  "created_at": "2026-04-13T00:20:30.096336",
+  "stages": {
+    "resource_finder": {
+      "status": "completed",
+      "started_at": "2026-04-13T00:20:30.234844",
+      "completed_at": "2026-04-13T00:31:22.627583",
+      "success": true,
+      "outputs": {
+        "literature_review": "/workspaces/generalization-refusal-f96b-codex/literature_review.md",
+        "resources_catalog": "/workspaces/generalization-refusal-f96b-codex/resources.md",
+        "papers_dir": "/workspaces/generalization-refusal-f96b-codex/papers",
+        "datasets_dir": "/workspaces/generalization-refusal-f96b-codex/datasets",
+        "code_dir": "/workspaces/generalization-refusal-f96b-codex/code"
+      }
+    },
+    "experiment_runner": {
+      "status": "failed",
+      "started_at": "2026-04-13T00:31:22.627865",
+      "completed_at": "2026-04-13T00:31:24.954221",
+      "success": false,
+      "outputs": {
+        "success": false,
+        "return_code": 1,
+        "elapsed_time": 2.3153700828552246,
+        "log_file": "/workspaces/generalization-refusal-f96b-codex/logs/execution_codex.log",
+        "transcript_file": "/workspaces/generalization-refusal-f96b-codex/logs/execution_codex_transcript.jsonl"
+      }
+    }
+  },
+  "current_stage": null,
+  "completed": false
+}

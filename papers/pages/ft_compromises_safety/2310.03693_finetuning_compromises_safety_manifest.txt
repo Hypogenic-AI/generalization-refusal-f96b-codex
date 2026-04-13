@@ -1,0 +1,17 @@
+PDF: papers/2310.03693_finetuning_compromises_safety.pdf
+Total pages: 45
+Pages per chunk: 4
+
+Chunks:
+  2310.03693_finetuning_compromises_safety_chunk_001.pdf: pages 1-4
+  2310.03693_finetuning_compromises_safety_chunk_002.pdf: pages 5-8
+  2310.03693_finetuning_compromises_safety_chunk_003.pdf: pages 9-12
+  2310.03693_finetuning_compromises_safety_chunk_004.pdf: pages 13-16
+  2310.03693_finetuning_compromises_safety_chunk_005.pdf: pages 17-20
+  2310.03693_finetuning_compromises_safety_chunk_006.pdf: pages 21-24
+  2310.03693_finetuning_compromises_safety_chunk_007.pdf: pages 25-28
+  2310.03693_finetuning_compromises_safety_chunk_008.pdf: pages 29-32
+  2310.03693_finetuning_compromises_safety_chunk_009.pdf: pages 33-36
+  2310.03693_finetuning_compromises_safety_chunk_010.pdf: pages 37-40
+  2310.03693_finetuning_compromises_safety_chunk_011.pdf: pages 41-44
+  2310.03693_finetuning_compromises_safety_chunk_012.pdf: page 45
